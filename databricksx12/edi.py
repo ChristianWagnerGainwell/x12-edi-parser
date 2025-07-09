@@ -1,14 +1,8 @@
 import re, functools
-from collections import ChainMap, namedtuple
+from collections import ChainMap
 from databricksx12.format import *
 
-# Named tuples for serialization
-EDIState = namedtuple('EDIState', [
-    'format_cls', 'data', 'isa', 'sender_qualifier_id', 'recipient_qualifier_id',
-    'standard_version', 'date', 'time', 'control_number', 'strict_transactions'
-])
 
-SegmentState = namedtuple('SegmentState', ['data', 'format_cls'])
 
 #
 # Base class for parsing EDI x12
@@ -181,39 +175,7 @@ class EDI():
     def header(self):
         return self.data[0]
 
-    def __getstate__(self):
-        """
-        Return state values to be pickled.
-        Called by pickle.dumps() and cloudpickle.dumps()
-        """
-        return EDIState(
-            format_cls=self.format_cls,
-            data=self.data,
-            isa=self.isa,
-            sender_qualifier_id=self.sender_qualifier_id,
-            recipient_qualifier_id=self.recipient_qualifier_id,
-            standard_version=self.standard_version,
-            date=self.date,
-            time=self.time,
-            control_number=self.control_number,
-            strict_transactions=self._strict_transactions
-        )
 
-    def __setstate__(self, state):
-        """
-        Restore state from the unpickled state values.
-        Called by pickle.loads() and cloudpickle.loads()
-        """
-        self.format_cls = state.format_cls
-        self.data = state.data
-        self.isa = state.isa
-        self.sender_qualifier_id = state.sender_qualifier_id
-        self.recipient_qualifier_id = state.recipient_qualifier_id
-        self.standard_version = state.standard_version
-        self.date = state.date
-        self.time = state.time
-        self.control_number = state.control_number
-        self._strict_transactions = state.strict_transactions
 
     def __eq__(self, other):
         """
@@ -298,23 +260,7 @@ class Segment():
     def empty(cls):
         return cls(data="")
 
-    def __getstate__(self):
-        """
-        Return state values to be pickled.
-        Called by pickle.dumps() and cloudpickle.dumps()
-        """
-        return SegmentState(
-            data=self.data,
-            format_cls=self.format_cls
-        )
 
-    def __setstate__(self, state):
-        """
-        Restore state from the unpickled state values.
-        Called by pickle.loads() and cloudpickle.loads()
-        """
-        self.data = state.data
-        self.format_cls = state.format_cls
 
     def __eq__(self, other):
         """

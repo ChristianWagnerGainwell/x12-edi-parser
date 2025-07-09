@@ -1,9 +1,5 @@
 from databricksx12.edi import *
 from databricksx12.format import *
-from collections import namedtuple
-
-# Named tuple for serialization
-TransactionState = namedtuple('TransactionState', ['data', 'format_cls', 'transaction_type'])
 
 """
  Base class for all transactions (ST/SE Segments)
@@ -24,23 +20,5 @@ class Transaction(EDI):
         self.format_cls = delim_cls
         self.transaction_type = transaction_type
 
-    def __getstate__(self):
-        """
-        Return state values to be pickled.
-        Called by pickle.dumps() and cloudpickle.dumps()
-        """
-        return TransactionState(
-            data=self.data,
-            format_cls=self.format_cls,
-            transaction_type=self.transaction_type
-        )
 
-    def __setstate__(self, state):
-        """
-        Restore state from the unpickled state values.
-        Called by pickle.loads() and cloudpickle.loads()
-        """
-        self.data = state.data
-        self.format_cls = state.format_cls
-        self.transaction_type = state.transaction_type
 
