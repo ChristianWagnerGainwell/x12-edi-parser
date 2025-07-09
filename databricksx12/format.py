@@ -1,3 +1,7 @@
+from collections import namedtuple
+
+# Named tuple for serialization
+FormatState = namedtuple('FormatState', ['SEGMENT_DELIM', 'ELEMENT_DELIM', 'SUB_DELIM', 'class_name'])
 
 #
 # 
@@ -21,21 +25,21 @@ class Format(dict):
         Return state values to be pickled.
         Called by pickle.dumps() and cloudpickle.dumps()
         """
-        return {
-            'SEGMENT_DELIM': self.SEGMENT_DELIM,
-            'ELEMENT_DELIM': self.ELEMENT_DELIM,
-            'SUB_DELIM': self.SUB_DELIM,
-            'class_name': self.__class__.__name__
-        }
+        return FormatState(
+            SEGMENT_DELIM=self.SEGMENT_DELIM,
+            ELEMENT_DELIM=self.ELEMENT_DELIM,
+            SUB_DELIM=self.SUB_DELIM,
+            class_name=self.__class__.__name__
+        )
 
     def __setstate__(self, state):
         """
         Restore state from the unpickled state values.
         Called by pickle.loads() and cloudpickle.loads()
         """
-        self.SEGMENT_DELIM = state['SEGMENT_DELIM']
-        self.ELEMENT_DELIM = state['ELEMENT_DELIM']
-        self.SUB_DELIM = state['SUB_DELIM']
+        self.SEGMENT_DELIM = state.SEGMENT_DELIM
+        self.ELEMENT_DELIM = state.ELEMENT_DELIM
+        self.SUB_DELIM = state.SUB_DELIM
 
 #
 #  https://www.ibm.com/docs/en/sgfmw/5.3.1?topic=gs-edi-delimiters
