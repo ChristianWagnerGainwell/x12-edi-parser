@@ -45,8 +45,11 @@ class MemberEnrollment(MedicalClaim):
                     "coverage_desc": self.COVERAGE_DESC_MAPPING.get(seg.element(3), "Unknown"),
                 }
             elif seg_type == "DTP" and current_plan:
-                current_plan["effective_date"] = seg.element(3)
-                current_plan["end_date"] = seg.element(4)
+                dtp_code = seg.element(1)
+                if dtp_code == "348":
+                    current_plan["effective_date"] = seg.element(3)
+                elif dtp_code == "349":
+                    current_plan["end_date"] = seg.element(3)
 
         if current_plan:
             plans.append(current_plan)
